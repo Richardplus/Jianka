@@ -17,9 +17,12 @@ import android.text.Html;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,26 +36,21 @@ import tech.jianka.adapter.MyAdapter;
 import tech.jianka.data.Card;
 import tech.jianka.data.DataType;
 import tech.jianka.data.GroupData;
-import tech.jianka.data.Item;
 import tech.jianka.data.Task;
 import tech.jianka.fragment.FragmentManager;
 
-import static tech.jianka.utils.ItemUtils.getSDCardPath;
-
-public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
+public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,AdapterView.OnItemSelectedListener {
     private RadioGroup mTaskSelecotor;
     private EditText mEditTitle;
     private Spinner mGroupSelector;
     private EditText mEditContent;
     private TextView mIndicator;
     private ImageView iv_image;
-    private Item item;
     private String str;
     private DBConnection helper;
     private BaseAdapter myAdapter;
     private String[] mIndicatorText;
-    private int cardType;
-    private String path;
+    private int taskType= DataType.CARD;
 
 
     @Override
@@ -73,13 +71,11 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         mEditContent = (EditText) findViewById(R.id.new_card_content);
         mTaskSelecotor = (RadioGroup) findViewById(R.id.new_card_task_selector);
         mGroupSelector = (Spinner) findViewById(R.id.new_card_group_selector);
+        mGroupSelector.setOnItemSelectedListener(this);
+
         mEditContent = (EditText) findViewById(R.id.new_card_content);
         mTaskSelecotor.setOnCheckedChangeListener(this);
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-            item = (Item) bundle.getSerializable("CARD_DETAIL");
-        }
+
 
         ArrayList<String> groups = (ArrayList<String>) GroupData.getGroupTitles();
 
@@ -248,14 +244,14 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         String title = mEditTitle.getText().toString();
         String content = mEditContent.getText().toString();
         String filePath;
-        if (cardType == DataType.CARD) {
-            filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString());
+        if (taskType == DataType.CARD) {
+            filePath = "jianka/data/" + mGroupSelector.getSelectedItem().toString();
             Card card = new Card(title, filePath, content);
             FragmentManager.getRecentFragment().adapter.addItem(card);
         } else {
             filePath = "jianka/task/" + mIndicator.getText().toString();
-            Task task = new Task(title, filePath, cardType);
-            FragmentManager.getTaskFragment().adapter.addItem(task);
+            Task task = new Task(title, filePath,content, taskType);
+            FragmentManager.getTaskFragment().mAdapter.addItem(task);
         }
     }
 
@@ -265,27 +261,45 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             switch (checkedId) {
                 case R.id.task_regular:
                     mIndicator.setText(mIndicatorText[0]);
-                    cardType = DataType.CARD;
+                    taskType = DataType.CARD;
                     break;
                 case R.id.task_important_emergent:
-                    // TODO: 2017/8/6 设置和spinner的联动
+                    // TODO: 2017/8/6 bug 两个选择不能联动
                     mIndicator.setText(mIndicatorText[1]);
-                    cardType = DataType.TASK_IMPORTANT_EMERGENT;
+                    taskType = DataType.TASK_IMPORTANT_EMERGENT;
                     break;
                 case R.id.task_important_not_emergent:
                     mIndicator.setText(mIndicatorText[2]);
-                    cardType = DataType.TASK_IMPORTANT_NOT_EMERGENT;
+                    taskType = DataType.TASK_IMPORTANT_NOT_EMERGENT;
                     break;
                 case R.id.task_unimportant_emergent:
                     mIndicator.setText(mIndicatorText[3]);
-                    cardType = DataType.TASK_UNIMPORTANT_EMERGENT;
+                    taskType = DataType.TASK_UNIMPORTANT_EMERGENT;
                     break;
                 case R.id.task_unimportant_not_emergent:
                     mIndicator.setText(mIndicatorText[4]);
-                    cardType = DataType.TASK_UNIMPORTANT_NOT_EMERGENT;
+                    taskType = DataType.TASK_UNIMPORTANT_NOT_EMERGENT;
                     break;
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (parent.getId() == R.id.new_card_group_selector) {
+            if (parent.getSelectedItemPosition()==1) {
+                if (taskType == DataType.CARD) {
+                    taskType = DataType.TASK_IMPORTANT_EMERGENT;
+                    RadioButton button = (RadioButton) findViewById(R.id.task_important_emergent);
+                    button.setChecked(true);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 //    StringBuffer status = new StringBuffer();
 //    //①获取系统的Configuration对象
