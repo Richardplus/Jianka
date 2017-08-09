@@ -1,13 +1,8 @@
 package tech.jianka.data;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import static tech.jianka.utils.CardUtil.getSpecifiedSDPath;
-import static tech.jianka.utils.CardUtil.inflateCardFromPath;
 
 /**
  * Created by Richa on 2017/8/3.
@@ -15,26 +10,20 @@ import static tech.jianka.utils.CardUtil.inflateCardFromPath;
 
 public class RecentData {
     // TODO: 2017/8/3 读取最近修改的卡片数据
-    private List<Item> data = new ArrayList<>();
+    private List<Card> data = new ArrayList<>();
 
-    public RecentData() {
-        String path = getSpecifiedSDPath("jianka/log/recent.txt");
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(
-                    new FileInputStream(path)));
-            for (String line = br.readLine(); line != null; line = br.readLine()) {
-                data.add(inflateCardFromPath(line));
-            }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+
+    public List<Card> getData() {
+        return data;
     }
 
-    public List<Item> getData() {
-        return data;
+    public class RecentList extends ArrayList<String> implements Serializable {
+        ArrayList<String> recentList = new ArrayList<>();
+
+        public RecentList(ArrayList<String> recentList) {
+            this.recentList = recentList;
+        }
     }
 
 }
