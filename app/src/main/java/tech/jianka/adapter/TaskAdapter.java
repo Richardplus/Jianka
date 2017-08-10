@@ -83,7 +83,7 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((TaskViewHolder) holder).mTaskTitle.setText(card.getCardTitle());
             ((TaskViewHolder) holder).mTaskContent.setText(card.getCardContent());
             try {
-                String date = longToString(card.getModifiedTime(), "HH:mm MM/dd");
+                String date = longToString(card.getModifiedTime(), "MM/dd HH:mm");
                 ((TaskViewHolder) holder).mTaskDate.setText(date);
             } catch (ParseException e) {
                 e.printStackTrace();

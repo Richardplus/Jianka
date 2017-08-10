@@ -23,6 +23,12 @@
     <!--账号设置-->
     <string name="pref_category_account">账号</string>
     <string name="pref_account_personal">个人</string>
+    <string name="default_user_name" >User</string>
+    <string name="user_name" >用户名</string>
+    <string name="user_email" >用户邮箱</string>
+    <string name="default_user_email" >user@jianka.com</string>
+    <string name="pref_user_name" translatable="false">user_name</string>
+    <string name="pref_user_email" translatable="false">user_email</string>
     <string name="pref_account_team">团队</string>
     <string name="pref_account_team_not_yet">后续推出</string>
 
@@ -81,7 +87,7 @@
     <string name="action_refresh">刷新/同步</string>
     <string name="enter_a_title">卡片标题</string>
     <string name="enter_the_content">记录此刻的想法……</string>
-    <string name="time_example">2017年7月20日   9:36</string>
+    <string name="time_example">7月20日 9:36</string>
     <string name="new_card_activity">创建卡片</string>
     <string name="card_theme_color">卡色</string>
     <string name="important_or_emergent">等级</string>

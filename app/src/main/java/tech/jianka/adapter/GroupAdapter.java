@@ -1,6 +1,7 @@
 package tech.jianka.adapter;
 
 import android.graphics.BitmapFactory;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,12 @@ import tech.jianka.data.GroupData;
  */
 
 public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private RecyclerView recyclerView;
     private ItemClickListener listener;
     private List<Group> groups;
 
-    public GroupAdapter(List<Group> groups, ItemClickListener listener) {
+    public GroupAdapter(List<Group> groups,RecyclerView recyclerView, ItemClickListener listener) {
+        this.recyclerView = recyclerView;
         this.listener = listener;
         this.groups = groups;
     }
@@ -44,7 +46,8 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String name = groups.get(position).getFileName();
             String path = groups.get(position).getCoverPath();
             ((GroupViewHolder) holder).mTitle.setText(name);
-            if (new File(path).exists()) {
+            File file = new File(path);
+            if (file.exists() && file.getName().equals(name)) {
                 ((GroupViewHolder) holder).mImage.setImageBitmap(BitmapFactory.decodeFile(path));
             }
         }
@@ -84,6 +87,7 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public boolean renameGroup(int index, String title) {
         if (GroupData.renameGroup(index, title)) {
+            TransitionManager.beginDelayedTransition(recyclerView);
             notifyDataSetChanged();
             return true;
         }

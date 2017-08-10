@@ -22,7 +22,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import tech.jianka.adapter.MyAdapter;
@@ -249,7 +248,7 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
                 mCard.setCardContent(content);
                 return FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
             } else {
-                filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString() + File.separator);
+                filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString());
                 mCard = new Card(title, filePath, content);
                 return FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
             }
