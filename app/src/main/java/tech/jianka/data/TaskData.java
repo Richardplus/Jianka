@@ -41,23 +41,25 @@ public class TaskData {
         return data;
     }
 
-    public static void addTask(Card card) {
-        saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), card.getCardTitle() + ".card");
-        card.setFilePath(card.getFilePath() + File.separator + card.getCardTitle() + ".card");
-        data.add(4, card);
+    public static boolean addTask(Card card) {
+        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), card.getCardTitle() + ".card")) {
+            card.setFilePath(card.getFilePath() + File.separator + card.getCardTitle() + ".card");
+            data.add(4, card);
+            return true;
+        }
+        return false;
     }
 
     public static boolean removeTask(int index) {
         File file = new File(data.get(index).getFilePath());
-        if(file.delete()) {
+        if (file.delete()) {
             data.remove(index);
             return true;
-        }else return false;
+        } else return false;
     }
 
-    public static void modifiedTask(int index,Card card) {
-        removeTask(index);
-        addTask(card);
+    public static boolean modifiedTask(int index, Card card) {
+        return removeTask(index) && addTask(card);
     }
 
     public static Card getTask(int cardIndex) {

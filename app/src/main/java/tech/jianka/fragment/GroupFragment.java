@@ -43,7 +43,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
 
-    public GroupAdapter adapter;
+    public GroupAdapter mAdapter;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -88,8 +88,8 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
         layoutManager = new GridLayoutManager(getActivity(), 2, GridLayout.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         GroupData data = new GroupData();
-        adapter = new GroupAdapter(data.getGroup(), this);
-        recyclerView.setAdapter(adapter);
+        mAdapter = new GroupAdapter(data.getGroup(), this);
+        recyclerView.setAdapter(mAdapter);
     }
 
 
@@ -135,7 +135,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                int result = adapter.removeItem(clickedCardIndex);
+                                int result = mAdapter.removeItem(clickedCardIndex);
                                 if (result == GroupData.INBOX) {
                                     Toast.makeText(getActivity(),"收信箱不能被删除",Toast.LENGTH_SHORT).show();
                                 } else if (result == GroupData.NOT_EMPTY) {
@@ -149,7 +149,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    adapter.removeGroupAndCards(clickedCardIndex);
+                                                    mAdapter.removeGroupAndCards(clickedCardIndex);
                                                 }
                                             })
                                             .create();             //创建AlertDialog对象

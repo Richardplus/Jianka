@@ -35,9 +35,13 @@ public class GroupData {
         return groupItems;
     }
 
-    public static void addGroup(Group group) {
+    public static boolean addGroup(Group group) {
+        if (new File(group.getFilePath()).mkdirs()) {
+            groupItems.add(group);
+            return true;
+        }
+        return false;
 
-        new File(group.getFilePath()).mkdirs();
     }
 
     public static int removeGroup(int index) {
@@ -60,11 +64,15 @@ public class GroupData {
         groupItems.remove(index);
     }
 
-    public static void renameGroup(int index, String newName) {
+    public static boolean renameGroup(int index, String newName) {
         Group group = groupItems.get(index);
         group.setFileName(newName);
         File file = new File(groupItems.get(index).getFilePath());
-        file.renameTo(new File(file.getParent() + "/" + newName));
-        group.setFilePath(file.getPath());
+        if (file.renameTo(new File(file.getParent() + "/" + newName))) {
+            group.setFilePath(file.getPath());
+            return true;
+        }
+        return false;
     }
+
 }

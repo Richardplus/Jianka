@@ -60,10 +60,12 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return groups == null ? 0 : groups.size();
     }
 
-    public void addItem(Group group) {
-        groups.add(group);
-        GroupData.addGroup(group);
-        notifyDataSetChanged();
+    public boolean addItem(Group group) {
+        if (GroupData.addGroup(group)) {
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public int removeItem(int position) {
@@ -80,9 +82,12 @@ public class GroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void renameGroup(int index, String title) {
-        GroupData.renameGroup(index, title);
-        notifyDataSetChanged();
+    public boolean renameGroup(int index, String title) {
+        if (GroupData.renameGroup(index, title)) {
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public class GroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {

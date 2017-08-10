@@ -16,7 +16,6 @@ import java.util.List;
 
 import tech.jianka.activity.R;
 import tech.jianka.data.Card;
-import tech.jianka.data.Item;
 import tech.jianka.data.RecentData;
 
 import static tech.jianka.utils.ItemUtils.longToString;
@@ -71,9 +70,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         return cards == null ? 0 : cards.size();
     }
 
-    public void addItem(Card card) {
-        RecentData.addCard(card);
-        notifyDataSetChanged();
+    public boolean addItem(Card card) {
+        if (RecentData.addCard(card)){
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public boolean removeItem(int position) {
@@ -94,8 +96,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
         context.startActivity(Intent.createChooser(intent, context.getTitle()));
     }
 
-    public Item getItem(int clickedItemIndex) {
-        return cards.get(clickedItemIndex);
+
+    public boolean modifiedCard(int index, Card card) {
+        if(RecentData.modifiedCard(index,card)){
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public class CardViewHolder extends RecyclerView.ViewHolder

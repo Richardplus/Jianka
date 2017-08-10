@@ -27,21 +27,23 @@ public class RecentData {
 
     public static boolean removeCard(int index) {
         File file = new File(data.get(index).getFilePath());
-        if(file.delete()) {
+        if (file.delete()) {
             data.remove(index);
             return true;
-        }else return false;
+        } else return false;
     }
 
-    public static void addCard(Card card) {
-        saveFileToSDCard(Obj2Bytes(card), card.getFilePath(),card.getCardTitle()+".card");
-        card.setFilePath(card.getFilePath()+ File.separator+card.getCardTitle()+".card");
-        data.add(0, card);
+    public static boolean addCard(Card card) {
+        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), card.getCardTitle() + ".card")) {
+            card.setFilePath(card.getFilePath() + File.separator + card.getCardTitle() + ".card");
+            data.add(0, card);
+            return true;
+        }
+        return false;
     }
 
-    public static void modifiedCard(int index,Card card) {
-        removeCard(index);
-        addCard(card);
+    public static boolean modifiedCard(int index, Card card) {
+        return removeCard(index) && addCard(card);
     }
 
     public static Card getCard(int cardIndex) {

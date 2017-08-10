@@ -48,7 +48,7 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager layoutManager;
 
-    public CardAdapter adapter;
+    public CardAdapter mAdapter;
 
     public RecentFragment() {
         // Required empty public constructor
@@ -92,8 +92,8 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         RecentData data = new RecentData();
-        adapter = new CardAdapter(data.getData(), mRecyclerView, this);
-        mRecyclerView.setAdapter(adapter);
+        mAdapter = new CardAdapter(data.getData(), mRecyclerView, this);
+        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(5));
     }
 
@@ -142,10 +142,10 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                adapter.shareItem(clickedCardIndex, getActivity());
+                                mAdapter.shareItem(clickedCardIndex, getActivity());
                                 break;
                             case 1:
-                                if (!adapter.removeItem(clickedCardIndex)) {
+                                if (!mAdapter.removeItem(clickedCardIndex)) {
                                     Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_LONG).show();
                                 }
 
