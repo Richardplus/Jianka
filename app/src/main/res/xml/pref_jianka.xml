@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!--账号设置-->
-    <PreferenceCategory android:title="@string/pref_category_account" >
-        <Preference android:title="@string/pref_account_personal" />
-        <Preference android:title="@string/pref_account_team"
-            android:summary="@string/pref_account_team_not_yet"/>
+    <PreferenceCategory android:title="@string/pref_category_account">
+        <Preference android:title="@string/pref_account_personal">
+            <EditTextPreference
+                android:defaultValue="@string/default_user_name"
+                android:key="pref_user_name"
+                android:title="@string/user_name">
+            </EditTextPreference>
+            <EditTextPreference
+                android:defaultValue="@string/default_user_email"
+                android:key="pref_user_email"
+                android:title="@string/user_email">
+            </EditTextPreference>
+        </Preference>
     </PreferenceCategory>
     <!--外观设置-->
     <PreferenceCategory android:title="@string/pref_category_appearance" >

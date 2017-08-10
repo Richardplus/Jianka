@@ -65,7 +65,7 @@
             android:id="@+id/card_content_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <android.support.constraint.ConstraintLayout
                 app:layout_aspectRatio="250%"
@@ -74,27 +74,31 @@
 
                 <ImageView
                     android:id="@+id/card_item_image"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:contentDescription="@string/card_image"
                     android:scaleType="centerCrop"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:srcCompat="@drawable/background_inbox" />
+                    app:srcCompat="@drawable/background_inbox"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintHorizontal_bias="0.0" />
 
                 <TextView
                     android:id="@+id/card_item_content"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
+                    android:layout_height="60dp"
                     android:background="#88ffffff"
                     android:padding="8dp"
                     android:text="@string/enter_the_content"
                     android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
                     app:layout_heightPercent="35%"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/card_item_image"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent" />
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintHorizontal_bias="0.0" />
 
 
             </android.support.constraint.ConstraintLayout>

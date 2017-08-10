@@ -18,7 +18,7 @@ public class TaskData {
 
     private String[] paths = {
             "jianka/task/很重要-很紧急", "jianka/task/很重要-不紧急",
-            "jianka/task/不重要-很紧急", "jianka/task/不紧急-不重要"};
+            "jianka/task/不重要-很紧急", "jianka/task/不重要-不紧急"};
     private static List<Card> data = new ArrayList<>();
 
     public TaskData() {
@@ -42,8 +42,9 @@ public class TaskData {
     }
 
     public static boolean addTask(Card card) {
-        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), card.getCardTitle() + ".card")) {
-            card.setFilePath(card.getFilePath() + File.separator + card.getCardTitle() + ".card");
+        String cardName = System.currentTimeMillis() + ".card";
+        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), cardName)) {
+            card.setFilePath(card.getFilePath() + File.separator +cardName );
             data.add(4, card);
             return true;
         }

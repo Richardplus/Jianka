@@ -92,7 +92,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
         layoutManager = new GridLayoutManager(getActivity(), 2, GridLayout.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         mData = GroupData.getGroups();
-        mAdapter = new GroupAdapter(mData, this);
+        mAdapter = new GroupAdapter(mData, recyclerView,this);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -157,6 +157,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     mAdapter.removeGroupAndCards(clickedCardIndex);
+                                                    FragmentManager.getRecentFragment().mAdapter.notifyDataSetChanged();
                                                 }
                                             })
                                             .create();             //创建AlertDialog对象

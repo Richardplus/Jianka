@@ -87,10 +87,11 @@ public class NewCardGroupActivity extends AppCompatActivity implements View.OnCl
                 if (!title.isEmpty()) {
                     if (isRename) {
                         result = getGroupFragment().mAdapter.renameGroup(mIndex, title);
+
                     } else {
                         String path = getSDCardPath("jianka/data/" + title);
                         if (new File(path).exists()) {
-                            Toast.makeText(this, "卡组已存在", Toast.LENGTH_LONG);
+                            Toast.makeText(this, "卡组已存在", Toast.LENGTH_LONG).show();
                             break;
                         }
                         result = getGroupFragment().mAdapter.addItem(new Group(title, path));

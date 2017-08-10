@@ -45,12 +45,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        final boolean isExpand = mExpandedPosition == position;
+        boolean isExpand = mExpandedPosition == position;
         holder.mDetails.setVisibility(isExpand ? View.VISIBLE : View.GONE);
         holder.mCardContentBrief.setVisibility(isExpand?View.GONE:View.VISIBLE);
         Card card = cards.get(position);
         holder.mCardTitle.setText(card.getCardTitle());
-        holder.mCardContent.setText(card.getCardContent());
+        String content = card.getCardContent();
+        if (isExpand) {
+            holder.mCardContent.setText(content);
+        } else {
+            holder.mCardContentBrief.setText(content);
+        }
         try {
             String date = longToString(card.getModifiedTime(), "HH:mm MM/dd");
             holder.mCardDate.setText(date);

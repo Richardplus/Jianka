@@ -34,8 +34,9 @@ public class RecentData {
     }
 
     public static boolean addCard(Card card) {
-        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), card.getCardTitle() + ".card")) {
-            card.setFilePath(card.getFilePath() + File.separator + card.getCardTitle() + ".card");
+        String cardName = System.currentTimeMillis() + ".card";
+        if (saveFileToSDCard(Obj2Bytes(card), card.getFilePath(), cardName)) {
+            card.setFilePath(card.getFilePath() + File.separator + cardName);
             data.add(0, card);
             return true;
         }

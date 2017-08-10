@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import tech.jianka.adapter.HomeFragmentPagerAdapter;
+import tech.jianka.data.DataType;
 import tech.jianka.fragment.FragmentManager;
 import tech.jianka.fragment.GroupFragment;
 import tech.jianka.fragment.RecentFragment;
@@ -57,9 +58,11 @@ public class MainActivity extends AppCompatActivity
                         intent.setClass(context, NewCardGroupActivity.class);
                         break;
                     case FragmentManager.RECENT_FRAGMENT:
+                        intent.putExtra(DataType.INIT_TYPE, DataType.NEW_CARD);
                          intent = new Intent(context, NewCardActivity.class);
                         break;
                     case FragmentManager.TASK_FRAGMENT:
+                        intent.putExtra(DataType.INIT_TYPE, DataType.NEW_TASK);
                         intent = new Intent(context, NewCardActivity.class);
                         break;
                 }
