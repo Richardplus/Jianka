@@ -91,7 +91,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
         recyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         layoutManager = new GridLayoutManager(getActivity(), 2, GridLayout.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        mData = new GroupData().getGroups();
+        mData = GroupData.getGroups();
         mAdapter = new GroupAdapter(mData, this);
         recyclerView.setAdapter(mAdapter);
     }
@@ -124,6 +124,7 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
     @Override
     public void onItemClick(int clickedCardIndex) {
         Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+        intent.putExtra(DataType.ACTIVITY_TITLE, mData.get(clickedCardIndex).getFileName());
         intent.putExtra(DataType.GROUP_TYPE, DataType.CARD);
         intent.putExtra(DataType.GROUP_PATH, mData.get(clickedCardIndex).getFilePath());
         startActivity(intent);

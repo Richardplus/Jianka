@@ -75,7 +75,9 @@
         <activity
             android:name=".NewCardGroupActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".GroupDetailActivity"></activity>
+        <activity android:name=".GroupDetailActivity"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

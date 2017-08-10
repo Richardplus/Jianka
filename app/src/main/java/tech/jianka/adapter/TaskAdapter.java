@@ -118,8 +118,10 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public boolean addItem(Card card) {
-        TaskData.addTask(card);
-        notifyDataSetChanged();
+        if(TaskData.addTask(card)){
+            notifyDataSetChanged();
+            return true;
+        }
         return false;
     }
 

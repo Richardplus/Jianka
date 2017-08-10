@@ -169,11 +169,13 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
             case R.id.action_save:
                 if (saveCard()) {
                     NavUtils.navigateUpFromSameTask(this);
+                    return true;
                 } else
-                    return false;
+                    return  false;
             case R.id.action_share:
                 if (isEmpty()) {
                     shareDialog();
@@ -241,30 +243,28 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             title = content.substring(content.length() > 10 ? 10 : content.length() - 1);
         }
         String filePath;
-        boolean resultCode;
         if (cardType == DataType.CARD) {
             if (isEdit) {
                 mCard.setCardTitle(title);
                 mCard.setCardContent(content);
-                resultCode = FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
+                return FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
             } else {
                 filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString() + File.separator);
                 mCard = new Card(title, filePath, content);
-                resultCode = FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
+                return FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
             }
         } else {
             if (isEdit) {
                 mCard.setCardTitle(title);
                 mCard.setCardContent(content);
                 mCard.setCardType(cardType);
-                resultCode = getTaskFragment().mAdapter.modifiedTask(cardIndex, mCard);
+                return getTaskFragment().mAdapter.modifiedTask(cardIndex, mCard);
             } else {
-                filePath = getSDCardPath("jianka/mCard/" + mIndicator.getText().toString());
+                filePath = getSDCardPath("jianka/task/" + mIndicator.getText().toString());
                 Card card = new Card(title, filePath, content, cardType);
-                resultCode = FragmentManager.getTaskFragment().mAdapter.addItem(card);
+                return FragmentManager.getTaskFragment().mAdapter.addItem(card);
             }
         }
-        return resultCode;
     }
 
     @Override

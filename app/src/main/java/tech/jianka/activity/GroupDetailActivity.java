@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.List;
@@ -32,7 +34,10 @@ public class GroupDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(DataType.ACTIVITY_TITLE));
-        mGroupPath = intent.getStringExtra(DataType.GROUP_INDEX);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        mGroupPath = intent.getStringExtra(DataType.GROUP_PATH);
 
         cards = getAllSubCards(mGroupPath);
         switch (intent.getIntExtra(DataType.GROUP_TYPE, 999)) {
@@ -48,6 +53,16 @@ public class GroupDetailActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initAdapterForTask(final Activity activity) {

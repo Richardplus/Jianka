@@ -19,7 +19,6 @@ public class GroupData {
     private static List<String> groupTitles = new ArrayList<>();
 
     public GroupData() {
-        groupItems = getAllGroups(getSDCardPath("jianka/data"));
     }
 
     public static List<String> getGroupTitles() {
@@ -32,6 +31,12 @@ public class GroupData {
     }
 
     public static List<Group> getGroups() {
+        if (groupItems != null) {
+            return groupItems;
+        }else return refreshGroups();
+    }
+    public static List<Group> refreshGroups() {
+        groupItems = getAllGroups(getSDCardPath("jianka/data"));
         return groupItems;
     }
 

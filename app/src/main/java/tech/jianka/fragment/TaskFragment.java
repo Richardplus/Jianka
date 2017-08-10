@@ -125,6 +125,7 @@ public class TaskFragment extends Fragment implements TaskAdapter.ItemClickListe
     public void onItemClick(int clickedCardIndex) {
         if (clickedCardIndex < 4) {
             Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+            intent.putExtra(DataType.ACTIVITY_TITLE, mData.get(clickedCardIndex).getFileName());
             intent.putExtra(DataType.GROUP_TYPE, DataType.TASK);
             intent.putExtra(DataType.GROUP_PATH, mData.get(clickedCardIndex).getFilePath());
             startActivity(intent);
