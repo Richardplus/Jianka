@@ -16,9 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.List;
+
+import tech.jianka.activity.GroupDetailActivity;
 import tech.jianka.activity.NewCardGroupActivity;
 import tech.jianka.activity.R;
 import tech.jianka.adapter.GroupAdapter;
+import tech.jianka.data.DataType;
+import tech.jianka.data.Group;
 import tech.jianka.data.GroupData;
 
 /**
@@ -39,11 +44,10 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
     private int fragmentType;
     private OnFragmentInteractionListener mListener;
     private View view;
-
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-
     public GroupAdapter mAdapter;
+    private List<Group> mData;
 
     public GroupFragment() {
         // Required empty public constructor
@@ -87,8 +91,8 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
         recyclerView = (RecyclerView) view.findViewById(R.id.group_recycler_view);
         layoutManager = new GridLayoutManager(getActivity(), 2, GridLayout.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
-        GroupData data = new GroupData();
-        mAdapter = new GroupAdapter(data.getGroup(), this);
+        mData = GroupData.getGroups();
+        mAdapter = new GroupAdapter(mData, this);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -119,8 +123,11 @@ public class GroupFragment extends Fragment implements GroupAdapter.ItemClickLis
 
     @Override
     public void onItemClick(int clickedCardIndex) {
-        // TODO: 2017/8/6 显示group中的内容  fragment 层叠
-        // TODO: 2017/7/26 处理卡片单击事件
+        Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+        intent.putExtra(DataType.ACTIVITY_TITLE, mData.get(clickedCardIndex).getFileName());
+        intent.putExtra(DataType.GROUP_TYPE, DataType.CARD);
+        intent.putExtra(DataType.GROUP_PATH, mData.get(clickedCardIndex).getFilePath());
+        startActivity(intent);
     }
 
 

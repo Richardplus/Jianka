@@ -61,7 +61,7 @@ public class NewCardGroupActivity extends AppCompatActivity implements View.OnCl
             case DataType.EDIT_GROUP:
                 isRename = true;
                 mIndex = intent.getIntExtra(DataType.GROUP_INDEX, 999);
-                Group group = GroupData.getGroup().get(mIndex);
+                Group group = GroupData.getGroups().get(mIndex);
                 mEditGroupTitle.setText(group.getFileName());
                 if (new File(group.getCoverPath()).exists()) {
                     mImageGroupCover.setImageBitmap(BitmapFactory.decodeFile(group.getCoverPath()));

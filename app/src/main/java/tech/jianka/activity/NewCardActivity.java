@@ -39,6 +39,7 @@ import static tech.jianka.utils.ItemUtils.getSDCardPath;
 public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
     private EditText mEditTitle;
     private Spinner mGroupSelector;
+    private RadioGroup mTaskSelector;
     private EditText mEditContent;
     private TextView mIndicator;
     private ImageView iv_image;
@@ -64,7 +65,7 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         mIndicator = (TextView) findViewById(R.id.new_card_task_indicator);
         mEditTitle = (EditText) findViewById(R.id.new_card_title);
         mEditContent = (EditText) findViewById(R.id.new_card_content);
-        RadioGroup mTaskSelector = (RadioGroup) findViewById(R.id.new_card_task_selector);
+        mTaskSelector = (RadioGroup) findViewById(R.id.new_card_task_selector);
         mGroupSelector = (Spinner) findViewById(R.id.new_card_group_selector);
         mGroupSelector.setOnItemSelectedListener(this);
 
@@ -86,19 +87,20 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             case DataType.NEW_CARD:
                 break;
             case DataType.NEW_TASK:
+                RadioButton button = (RadioButton) findViewById(R.id.task_important_emergent);
+                button.setChecked(true);
+                cardType = DataType.TASK_IMPORTANT_EMERGENT;
                 break;
             case DataType.EDIT_CARD:
                 isEdit = true;
                 cardIndex = intent.getIntExtra(DataType.CARD_INDEX, 999);
                 mCard = RecentData.getCard(cardIndex);
-                cardType = DataType.CARD;
                 loadCard(mCard);
                 break;
             case DataType.EDIT_TASK:
                 isEdit = true;
                 cardIndex = intent.getIntExtra(DataType.TASK_INDEX, 999);
                 mCard = TaskData.getTask(cardIndex);
-                cardType = mCard.getCardType();
                 loadTask(mCard);
                 break;
             default:
@@ -106,15 +108,34 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         }
     }
 
-    private void loadTask(Card card) {
-        mEditTitle.setText(card.getCardTitle());
-        mEditContent.setText(card.getCardContent());
-    }
-
     private void loadCard(Card card) {
+        onCheckedChanged(mTaskSelector, R.id.task_regular);
+        cardType = DataType.CARD;
         mEditTitle.setText(card.getCardTitle());
         mEditContent.setText(card.getCardContent());
         // TODO: 2017/8/9 分组问题还没解决
+    }
+
+    private void loadTask(Card card) {
+        cardType = mCard.getCardType();
+        int id = R.id.task_important_emergent;
+        switch (cardType) {
+            case DataType.TASK_IMPORTANT_EMERGENT:
+                id = R.id.task_important_emergent;
+                break;
+            case DataType.TASK_IMPORTANT_NOT_EMERGENT:
+                id = R.id.task_important_not_emergent;
+                break;
+            case DataType.TASK_UNIMPORTANT_EMERGENT:
+                id = R.id.task_unimportant_emergent;
+                break;
+            case DataType.TASK_UNIMPORTANT_NOT_EMERGENT:
+                id = R.id.task_unimportant_not_emergent;
+                break;
+        }
+        onCheckedChanged(mTaskSelector, id);
+        mEditTitle.setText(card.getCardTitle());
+        mEditContent.setText(card.getCardContent());
     }
 
 
@@ -148,11 +169,13 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             case R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
+
             case R.id.action_save:
                 if (saveCard()) {
                     NavUtils.navigateUpFromSameTask(this);
+                    return true;
                 } else
-                    return false;
+                    return  false;
             case R.id.action_share:
                 if (isEmpty()) {
                     shareDialog();
@@ -220,30 +243,28 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             title = content.substring(content.length() > 10 ? 10 : content.length() - 1);
         }
         String filePath;
-        boolean resultCode;
         if (cardType == DataType.CARD) {
             if (isEdit) {
                 mCard.setCardTitle(title);
                 mCard.setCardContent(content);
-                resultCode = FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
+                return FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
             } else {
                 filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString() + File.separator);
                 mCard = new Card(title, filePath, content);
-                resultCode = FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
+                return FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
             }
         } else {
             if (isEdit) {
                 mCard.setCardTitle(title);
                 mCard.setCardContent(content);
                 mCard.setCardType(cardType);
-                resultCode = getTaskFragment().mAdapter.modifiedTask(cardIndex, mCard);
+                return getTaskFragment().mAdapter.modifiedTask(cardIndex, mCard);
             } else {
-                filePath = getSDCardPath("jianka/mCard/" + mIndicator.getText().toString());
+                filePath = getSDCardPath("jianka/task/" + mIndicator.getText().toString());
                 Card card = new Card(title, filePath, content, cardType);
-                resultCode = FragmentManager.getTaskFragment().mAdapter.addItem(card);
+                return FragmentManager.getTaskFragment().mAdapter.addItem(card);
             }
         }
-        return resultCode;
     }
 
     @Override
