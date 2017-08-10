@@ -2,6 +2,8 @@ package tech.jianka.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.percent.PercentFrameLayout;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,6 @@ import java.util.List;
 
 import tech.jianka.activity.R;
 import tech.jianka.data.Card;
-import tech.jianka.data.Item;
 import tech.jianka.data.RecentData;
 
 import static tech.jianka.utils.ItemUtils.longToString;
@@ -23,18 +24,19 @@ import static tech.jianka.utils.ItemUtils.longToString;
  * Created by Richard on 2017/7/28.
  */
 
-public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
+    private RecyclerView recyclerView;
     private ItemClickListener listener;
     private List<Card> cards;
-
-    public CardAdapter(List<Card> cards, ItemClickListener listener) {
+    private int mExpandedPosition = -1;
+    public CardAdapter(List<Card> cards, RecyclerView recyclerView, ItemClickListener listener) {
         this.listener = listener;
+        this.recyclerView = recyclerView;
         this.cards = cards;
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         view = inflater.inflate(R.layout.card_item_big_rectangle, parent, false);
@@ -42,17 +44,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(CardViewHolder holder, int position) {
+        final boolean isExpand = mExpandedPosition == position;
+        holder.mDetails.setVisibility(isExpand ? View.VISIBLE : View.GONE);
+        holder.mCardContentBrief.setVisibility(isExpand?View.GONE:View.VISIBLE);
         Card card = cards.get(position);
-        ((CardViewHolder) holder).mCardTitle.setText(card.getCardTitle());
-        ((CardViewHolder) holder).mCardContent.setText(card.getCardContent());
+        holder.mCardTitle.setText(card.getCardTitle());
+        holder.mCardContent.setText(card.getCardContent());
         try {
             String date = longToString(card.getModifiedTime(), "HH:mm MM/dd");
-            ((CardViewHolder) holder).mCardDate.setText(date);
+            holder.mCardDate.setText(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        ((CardViewHolder) holder).mCardContent.setText(card.getCardContent());
+        holder.mCardContent.setText(card.getCardContent());
     }
 
     @Override
@@ -65,9 +70,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return cards == null ? 0 : cards.size();
     }
 
-    public void addItem(Card card) {
-        RecentData.addCard(card);
-        notifyDataSetChanged();
+    public boolean addItem(Card card) {
+        if (RecentData.addCard(card)){
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public boolean removeItem(int position) {
@@ -88,15 +96,22 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         context.startActivity(Intent.createChooser(intent, context.getTitle()));
     }
 
-    public Item getItem(int clickedItemIndex) {
-        return cards.get(clickedItemIndex);
+
+    public boolean modifiedCard(int index, Card card) {
+        if(RecentData.modifiedCard(index,card)){
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public class CardViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
         TextView mCardTitle;
         TextView mCardDate;
-        TextView mCardGroup;
+        TextView mCardContentBrief;
+
+        PercentFrameLayout mDetails;
         TextView mCardContent;
         ImageView mCardImage;
 
@@ -104,7 +119,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
             mCardTitle = (TextView) itemView.findViewById(R.id.task_item_title);
             mCardDate = (TextView) itemView.findViewById(R.id.card_item_date);
-            mCardGroup = (TextView) itemView.findViewById(R.id.card_item_group);
+            mCardContentBrief = (TextView) itemView.findViewById(R.id.card_item_content_brief);
+            mDetails = (PercentFrameLayout) itemView.findViewById(R.id.card_content_detail);
             mCardImage = (ImageView) itemView.findViewById(R.id.card_item_image);
             mCardContent = (TextView) itemView.findViewById(R.id.card_item_content);
             itemView.setOnClickListener(this);
@@ -114,7 +130,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Override
         public void onClick(View v) {
             int clickedPosition = getAdapterPosition();
-            listener.onItemClick(clickedPosition);
+            if (mExpandedPosition == clickedPosition) {
+                mExpandedPosition = -1;
+                TransitionManager.beginDelayedTransition(recyclerView);
+                notifyDataSetChanged();
+                listener.onItemClick(clickedPosition);
+            }else {
+                mExpandedPosition = clickedPosition;
+                TransitionManager.beginDelayedTransition(recyclerView);
+                notifyDataSetChanged();
+            }
         }
 
         @Override

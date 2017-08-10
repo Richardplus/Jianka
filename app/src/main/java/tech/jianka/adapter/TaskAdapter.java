@@ -117,9 +117,10 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return cards == null ? 0 : cards.size();
     }
 
-    public void addItem(Card card) {
+    public boolean addItem(Card card) {
         TaskData.addTask(card);
         notifyDataSetChanged();
+        return false;
     }
 
     public boolean removeItem(int position) {
@@ -149,6 +150,14 @@ public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public Item getItem(int clickedItemIndex) {
         return cards.get(clickedItemIndex);
+    }
+
+    public boolean modifiedTask(int cardIndex, Card mCard) {
+        if (TaskData.modifiedTask(cardIndex, mCard)) {
+            notifyDataSetChanged();
+            return true;
+        }
+        return false;
     }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder

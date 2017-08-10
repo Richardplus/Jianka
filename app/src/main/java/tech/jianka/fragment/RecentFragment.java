@@ -45,10 +45,10 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
-    RecyclerView recyclerView;
+    RecyclerView mRecyclerView;
     RecyclerView.LayoutManager layoutManager;
 
-    public CardAdapter adapter;
+    public CardAdapter mAdapter;
 
     public RecentFragment() {
         // Required empty public constructor
@@ -88,13 +88,13 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recent_recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recent_recycler_view);
         layoutManager = new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false);
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
         RecentData data = new RecentData();
-        adapter = new CardAdapter(data.getData(), this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.addItemDecoration(new SpaceItemDecoration(5));
+        mAdapter = new CardAdapter(data.getData(), mRecyclerView, this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(5));
     }
 
 
@@ -142,10 +142,10 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                adapter.shareItem(clickedCardIndex, getActivity());
+                                mAdapter.shareItem(clickedCardIndex, getActivity());
                                 break;
                             case 1:
-                                if (!adapter.removeItem(clickedCardIndex)) {
+                                if (!mAdapter.removeItem(clickedCardIndex)) {
                                     Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_LONG).show();
                                 }
 

@@ -20,11 +20,11 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import tech.jianka.data.DataType;
 import tech.jianka.data.Group;
 import tech.jianka.data.GroupData;
-import tech.jianka.fragment.FragmentManager;
-import tech.jianka.fragment.GroupFragment;
 
+import static tech.jianka.fragment.FragmentManager.getGroupFragment;
 import static tech.jianka.utils.ItemUtils.getSDCardPath;
 import static tech.jianka.utils.ItemUtils.saveBitmapToSDCard;
 
@@ -36,7 +36,7 @@ public class NewCardGroupActivity extends AppCompatActivity implements View.OnCl
     private ImageView mImageGroupCover;
     private Bitmap mCover;
     private boolean isRename = false;
-    private int index;
+    private int mIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +52,21 @@ public class NewCardGroupActivity extends AppCompatActivity implements View.OnCl
         mBtnSave.setOnClickListener(this);
         mImageGroupCover = (ImageView) findViewById(R.id.new_card_group_cover);
         mImageGroupCover.setOnClickListener(this);
+
         Intent intent = getIntent();
-        if (intent.hasExtra("RENAME_GROUP")) {
-            isRename = true;
-            index = intent.getIntExtra("RENAME_GROUP", 999);
-            Group group = GroupData.getGroup().get(index);
-            mEditGroupTitle.setText(group.getFileName());
-            if (new File(group.getCoverPath()).exists()) {
-                mImageGroupCover.setImageBitmap(BitmapFactory.decodeFile(group.getCoverPath()));
-            }
+        switch (intent.getIntExtra(DataType.INIT_TYPE, 999)) {
+            case DataType.NEW_GROUP:
+                // TODO: 2017/8/10 do something
+                break;
+            case DataType.EDIT_GROUP:
+                isRename = true;
+                mIndex = intent.getIntExtra(DataType.GROUP_INDEX, 999);
+                Group group = GroupData.getGroup().get(mIndex);
+                mEditGroupTitle.setText(group.getFileName());
+                if (new File(group.getCoverPath()).exists()) {
+                    mImageGroupCover.setImageBitmap(BitmapFactory.decodeFile(group.getCoverPath()));
+                }
+                break;
         }
     }
 
@@ -77,23 +83,24 @@ public class NewCardGroupActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.new_card_group_save:
                 String title = mEditGroupTitle.getText().toString().trim();
-                if (!title.equals("")) {
+                boolean result = false;
+                if (!title.isEmpty()) {
                     if (isRename) {
-                        FragmentManager.getGroupFragment().adapter.renameGroup(index, title);
-                        NavUtils.navigateUpFromSameTask(this);
+                        result = getGroupFragment().mAdapter.renameGroup(mIndex, title);
                     } else {
                         String path = getSDCardPath("jianka/data/" + title);
                         if (new File(path).exists()) {
                             Toast.makeText(this, "卡组已存在", Toast.LENGTH_LONG);
-                            GroupFragment fragment =
-                                    FragmentManager.getGroupFragment();
-                            fragment.adapter.addItem(new Group(title, path));
-                            NavUtils.navigateUpFromSameTask(this);
+                            break;
                         }
+                        result = getGroupFragment().mAdapter.addItem(new Group(title, path));
                     }
                     if (mCover != null) {
                         saveBitmapToSDCard(mCover, "jianka/images", title);
                     }
+                }
+                if (result) {
+                    NavUtils.navigateUpFromSameTask(this);
                 }
                 break;
             case R.id.new_card_group_cover:

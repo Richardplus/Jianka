@@ -33,6 +33,7 @@ import tech.jianka.data.RecentData;
 import tech.jianka.data.TaskData;
 import tech.jianka.fragment.FragmentManager;
 
+import static tech.jianka.fragment.FragmentManager.getTaskFragment;
 import static tech.jianka.utils.ItemUtils.getSDCardPath;
 
 public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
@@ -43,8 +44,9 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
     private ImageView iv_image;
     private String[] mIndicatorText;
     private int cardType = DataType.CARD;
-    private boolean isDetail = false;
+    private boolean isEdit = false;
     private int cardIndex;
+    private Card mCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +82,27 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         mGroupSelector.setAdapter(myAdapter);
 
         Intent intent = getIntent();
-        if (intent.hasExtra("CARD_DETAILS")){
-            isDetail = true;
-            cardIndex = intent.getIntExtra("CARD_DETAILS",999);
-            Card card = RecentData.getCard(cardIndex);
-            loadCard(card);
-        } else if (intent.hasExtra("TASK_DETAILS")) {
-            isDetail = true;
-            cardIndex = intent.getIntExtra("TASK_DETAILS", 999);
-            Card card = TaskData.getTask(cardIndex);
-            loadTask(card);
+        switch (intent.getIntExtra(DataType.INIT_TYPE, 999)) {
+            case DataType.NEW_CARD:
+                break;
+            case DataType.NEW_TASK:
+                break;
+            case DataType.EDIT_CARD:
+                isEdit = true;
+                cardIndex = intent.getIntExtra(DataType.CARD_INDEX, 999);
+                mCard = RecentData.getCard(cardIndex);
+                cardType = DataType.CARD;
+                loadCard(mCard);
+                break;
+            case DataType.EDIT_TASK:
+                isEdit = true;
+                cardIndex = intent.getIntExtra(DataType.TASK_INDEX, 999);
+                mCard = TaskData.getTask(cardIndex);
+                cardType = mCard.getCardType();
+                loadTask(mCard);
+                break;
+            default:
+                break;
         }
     }
 
@@ -136,9 +149,10 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.action_save:
-                saveCard();
-                finish();
-                return true;
+                if (saveCard()) {
+                    NavUtils.navigateUpFromSameTask(this);
+                } else
+                    return false;
             case R.id.action_share:
                 if (isEmpty()) {
                     shareDialog();
@@ -182,44 +196,6 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
             }
         }).show();
     }
-/*
-    public boolean checkNetworkInfo() {
-
-        ConnectivityManager conMan = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        // mobile 3G Data Network
-        NetworkInfo.State mobile = conMan.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-                .getState();
-        // wifi
-        NetworkInfo.State wifi = conMan.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-                .getState();
-        // 如果3G网络和wifi网络都未连接，且不是处于正在连接状态 则进入Network Setting界面 由用户配置网络连接
-
-        if (mobile == NetworkInfo.State.CONNECTED || mobile == NetworkInfo.State.CONNECTING)
-            return true;
-        if (wifi == NetworkInfo.State.CONNECTED || wifi == NetworkInfo.State.CONNECTING)
-            return true;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("需要网络支持！")
-                .setCancelable(false)
-                .setPositiveButton("进行网络配置",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // 进入无线网络配置界面
-                                startActivity(new Intent(
-                                        Settings.ACTION_WIRELESS_SETTINGS));
-                                NewCardActivity.this.finish();
-                            }
-                        })
-                .setNegativeButton("退出", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        NewCardActivity.this.finish();
-                    }
-                });
-        builder.show();
-        return false;
-
-    }*/
 
     private boolean isEmpty() {
         if (mEditContent.getText() == null
@@ -233,19 +209,41 @@ public class NewCardActivity extends AppCompatActivity implements RadioGroup.OnC
         return true;
     }
 
-    private void saveCard() {
+    private boolean saveCard() {
         String title = mEditTitle.getText().toString();
         String content = mEditContent.getText().toString();
-        String filePath;
-        if (cardType == DataType.CARD) {
-            filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString() + File.separator);
-            Card card = new Card(title, filePath, content);
-            FragmentManager.getRecentFragment().adapter.addItem(card);
-        } else {
-            filePath = getSDCardPath("jianka/card/" + mIndicator.getText().toString());
-            Card card = new Card(title, filePath, content, cardType);
-            FragmentManager.getTaskFragment().mAdapter.addItem(card);
+        if (title.isEmpty() && content.isEmpty()) {
+            Toast.makeText(this, "内容不能为空", Toast.LENGTH_SHORT).show();
+            return false;
         }
+        if (title.isEmpty() && !content.isEmpty()) {
+            title = content.substring(content.length() > 10 ? 10 : content.length() - 1);
+        }
+        String filePath;
+        boolean resultCode;
+        if (cardType == DataType.CARD) {
+            if (isEdit) {
+                mCard.setCardTitle(title);
+                mCard.setCardContent(content);
+                resultCode = FragmentManager.getRecentFragment().mAdapter.modifiedCard(cardIndex, mCard);
+            } else {
+                filePath = getSDCardPath("jianka/data/" + mGroupSelector.getSelectedItem().toString() + File.separator);
+                mCard = new Card(title, filePath, content);
+                resultCode = FragmentManager.getRecentFragment().mAdapter.addItem(mCard);
+            }
+        } else {
+            if (isEdit) {
+                mCard.setCardTitle(title);
+                mCard.setCardContent(content);
+                mCard.setCardType(cardType);
+                resultCode = getTaskFragment().mAdapter.modifiedTask(cardIndex, mCard);
+            } else {
+                filePath = getSDCardPath("jianka/mCard/" + mIndicator.getText().toString());
+                Card card = new Card(title, filePath, content, cardType);
+                resultCode = FragmentManager.getTaskFragment().mAdapter.addItem(card);
+            }
+        }
+        return resultCode;
     }
 
     @Override

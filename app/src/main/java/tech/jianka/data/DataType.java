@@ -11,8 +11,14 @@ public class DataType {
     public static final int GROUP = 509;
     public static final int CARD = 753;
 
-    private static final int CARD_PLAIN_TEXT = 871;
+    public static final String INIT_TYPE = "INIT_TYPE";
+    public static final int NEW_CARD = 152;
+    public static final int NEW_TASK = 698;
+    public static final int EDIT_CARD = 456;
+    public static final int EDIT_TASK = 236;
+    public static final int EDIT_DONE = 885;
 
+    public static final int CARD_PLAIN_TEXT = 871;
     /**
      * Task的常量
      */
@@ -22,4 +28,9 @@ public class DataType {
     public static final int TASK_UNIMPORTANT_NOT_EMERGENT = 789;
     public static final int[] TASK_TYPE = {TASK_IMPORTANT_EMERGENT, TASK_IMPORTANT_NOT_EMERGENT,
             TASK_UNIMPORTANT_EMERGENT, TASK_UNIMPORTANT_NOT_EMERGENT};
+    public static final String CARD_INDEX = "CARD_INDEX";
+    public static final String TASK_INDEX = "TASK_INDEX";
+    public static final int NEW_GROUP = 846;
+    public static final int EDIT_GROUP = 862;
+    public static final String GROUP_INDEX = "GROUP_INDEX";
 }
