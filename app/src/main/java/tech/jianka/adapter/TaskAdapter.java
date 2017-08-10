@@ -29,11 +29,11 @@ import static tech.jianka.utils.ItemUtils.longToString;
  */
 
 public class TaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private RecyclerView mRecyclerView;
     private ItemClickListener listener;
     private List<Card> cards;
 
-    public TaskAdapter(List<Card> cards, ItemClickListener listener) {
+    public TaskAdapter(List<Card> cards,RecyclerView mRecyclerView, ItemClickListener listener) {
         this.listener = listener;
         this.cards = cards;
     }

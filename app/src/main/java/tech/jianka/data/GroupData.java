@@ -31,7 +31,7 @@ public class GroupData {
         return groupTitles;
     }
 
-    public static List<Group> getGroup() {
+    public static List<Group> getGroups() {
         return groupItems;
     }
 

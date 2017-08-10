@@ -19,6 +19,7 @@ import android.widget.Toast;
 import tech.jianka.activity.NewCardActivity;
 import tech.jianka.activity.R;
 import tech.jianka.adapter.CardAdapter;
+import tech.jianka.data.DataType;
 import tech.jianka.data.RecentData;
 import tech.jianka.utils.SpaceItemDecoration;
 
@@ -126,7 +127,8 @@ public class RecentFragment extends Fragment implements CardAdapter.ItemClickLis
     public void onItemClick(int clickedCardIndex) {
         // TODO: 2017/7/26 处理卡片单击事件
         Intent intent = new Intent(getActivity(), NewCardActivity.class);
-        intent.putExtra("CARD_DETAILS", clickedCardIndex);
+        intent.putExtra(DataType.INIT_TYPE, DataType.EDIT_CARD);
+        intent.putExtra(DataType.CARD_INDEX, clickedCardIndex);
         startActivity(intent);
     }
 

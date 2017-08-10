@@ -2,6 +2,7 @@ package tech.jianka.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,8 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
+import tech.jianka.activity.GroupDetailActivity;
+import tech.jianka.activity.NewCardActivity;
 import tech.jianka.activity.R;
 import tech.jianka.adapter.TaskAdapter;
+import tech.jianka.data.Card;
+import tech.jianka.data.DataType;
 import tech.jianka.data.TaskData;
 
 /**
@@ -39,8 +46,7 @@ public class TaskFragment extends Fragment implements TaskAdapter.ItemClickListe
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager layoutManager;
     public TaskAdapter mAdapter;
-
-    private TaskData mData;
+    private List<Card> mData;
     public TaskFragment() {
         // Required empty public constructor
     }
@@ -66,6 +72,7 @@ public class TaskFragment extends Fragment implements TaskAdapter.ItemClickListe
         if (getArguments() != null) {
             fragmentType = getArguments().getInt(ARG_FRAGMENT_TYPE);
         }
+
     }
 
     @Override
@@ -79,12 +86,11 @@ public class TaskFragment extends Fragment implements TaskAdapter.ItemClickListe
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mData = new TaskData();
-
+        mData = new TaskData().getData();
         mRecyclerView = (RecyclerView) view.findViewById(R.id.task_recycler_view);
         layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new TaskAdapter(mData.getData(), this);
+        mAdapter = new TaskAdapter(mData, mRecyclerView,this);
         mRecyclerView.setAdapter(mAdapter);
 
     }
@@ -117,8 +123,17 @@ public class TaskFragment extends Fragment implements TaskAdapter.ItemClickListe
 
     @Override
     public void onItemClick(int clickedCardIndex) {
-        // TODO: 2017/7/26 处理卡片单击事件
-
+        if (clickedCardIndex < 4) {
+            Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+            intent.putExtra(DataType.GROUP_TYPE, DataType.TASK);
+            intent.putExtra(DataType.GROUP_PATH, mData.get(clickedCardIndex).getFilePath());
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(getActivity(), NewCardActivity.class);
+            intent.putExtra(DataType.INIT_TYPE, DataType.EDIT_TASK);
+            intent.putExtra(DataType.TASK_INDEX, clickedCardIndex);
+            startActivity(intent);
+        }
     }
 
     @Override
